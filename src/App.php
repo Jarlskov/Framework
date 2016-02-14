@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Jarlskov\Framework;
 
-use Dotenv\Dotenv;
 use Jarlskov\Framework\Providers\RouteProvider;
 use Symfony\Component\HttpFoundation\Request;
 use Whoops\Handler\PrettyPageHandler;
@@ -13,6 +12,15 @@ use Whoops\Run as Whoops;
 class App
 {
     protected $routeProvider;
+    protected $environment;
+
+    /**
+     * Setup the environment.
+     */
+    public function __construct(string $environment = 'dev')
+    {
+        $this->environment = $environment;
+    }
 
     /**
      * Route the current request.
@@ -26,9 +34,9 @@ class App
     /**
      * Do full bootstrap.
      */
-    public function bootstrap()
+    public function bootstrap(string $configPath)
     {
-        $this->registerEnvironment();
+        $this->registerEnvironment($configPath);
         $this->registerErrorHandler();
         $this->registerRoutes();
     }
@@ -47,15 +55,6 @@ class App
     public function registerRoutes()
     {
         $this->routeProvider = new RouteProvider();
-    }
-
-    /**
-     * Register env variables.
-     */
-    public function registerEnvironment()
-    {
-        $dotenv = new Dotenv(__DIR__ . '/..');
-        $dotenv->load();
     }
 
     /**
